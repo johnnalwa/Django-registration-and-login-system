@@ -1,11 +1,15 @@
 from django import forms
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
-
-from .models import Profile, RoutePlan, UserProfile
+from django.contrib.auth.forms import UserCreationForm
+from .models import CustomUser, Profile, RoutePlan, UserProfile
 from .models import Client, Sale
-
-
+from users.models import CustomUser  # Import the CustomUser model
+class CustomUserCreationForm(UserCreationForm):
+    class Meta:
+        model = CustomUser
+        fields = ('username', 'password1', 'password2', 'is_superuser_with_tasks')
+        
 class RegisterForm(UserCreationForm):
     # fields we want to include and customize in our form
     first_name = forms.CharField(max_length=100,
@@ -124,14 +128,15 @@ class SaleForm(forms.ModelForm):
         
         
 class RoutePlanForm(forms.ModelForm):
-    agent = forms.ModelChoiceField(queryset=User.objects.all().order_by('username'))
+    # Use CustomUser model for the agent field
+    agent = forms.ModelChoiceField(queryset=CustomUser.objects.all().order_by('username'))
 
     class Meta:
         model = RoutePlan
         fields = ['date', 'agent', 'institution', 'location']
         widgets = {
             'date': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
-            'agent': forms.TextInput(attrs={'class': 'form-control', 'style': 'width: 40%;'}),
+            'agent': forms.Select(attrs={'class': 'form-control', 'style': 'width: 40%;'}),  # Change to forms.Select
             'institution': forms.TextInput(attrs={'class': 'form-control', 'style': 'width: 40%;'}),
             'location': forms.TextInput(attrs={'class': 'form-control', 'style': 'width: 40%;'}),
         }

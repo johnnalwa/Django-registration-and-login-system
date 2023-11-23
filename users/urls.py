@@ -32,4 +32,5 @@ urlpatterns = [
     
    path('create_route_plan/', views.create_route_plan, name='create_route_plan'),
    path('contacts/', client_list, name='contacts_list'),
+   path('superuser_dashboard/', superuser_dashboard, name='superuser_dashboard'),
 ]

@@ -14,8 +14,12 @@ import calendar
 from django.db.models import Sum, F, Case, When, Value, IntegerField
 from django.db.models.functions import Coalesce
 from django.db.models.functions import TruncMonth
+from django.contrib.auth.decorators import user_passes_test
 
-
+@user_passes_test(lambda u: u.is_superuser_with_tasks)
+def superuser_dashboard(request):
+    # Add logic for additional admin tasks
+    return render(request, 'users/management.html')
 
 def update_commissions():
     current_month = datetime.date.today().month

@@ -1,10 +1,11 @@
-from django.contrib import admin
-from .models import Profile
-from django.contrib import admin
-from .models import User, UserProfile, Client, Attendance, Sale, Commission, RoutePlan
+# users/admin.py
 
+from django.contrib import admin
+from .models import CustomUser, UserProfile, Client, Attendance, Sale, Commission, RoutePlan
 
-admin.site.register(Profile)
+# Register your models here.
+
+admin.site.register(CustomUser)
 admin.site.register(UserProfile)
 admin.site.register(Client)
 admin.site.register(Attendance)
