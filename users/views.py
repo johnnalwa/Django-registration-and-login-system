@@ -296,3 +296,13 @@ def create_route_plan(request):
         form = RoutePlanForm()
 
     return render(request, 'users/create_route_plan.html', {'form': form})
+
+@login_required
+def client_list(request):
+    # Filter clients based on the currently logged-in user
+    clients = Client.objects.filter(user=request.user)
+
+    # Select phone number, full name, and ministry
+    client_data = clients.values('phone_number', 'client_fullname', 'ministry')
+
+    return render(request, 'users/contacts.html', {'client_data': client_data})

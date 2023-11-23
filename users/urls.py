@@ -31,4 +31,5 @@ urlpatterns = [
     # path('monthly_commissions/', views.monthly_commissions, name='monthly_commissions'),
     
    path('create_route_plan/', views.create_route_plan, name='create_route_plan'),
+   path('contacts/', client_list, name='contacts_list'),
 ]
