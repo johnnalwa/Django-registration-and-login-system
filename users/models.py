@@ -1,8 +1,7 @@
 from django.db import models
-from django.contrib.auth.models import AbstractUser
+from django.contrib.auth.models import AbstractUser, BaseUserManager
 from PIL import Image
 from django.core.validators import RegexValidator
-from django.contrib.auth.models import BaseUserManager
 
 class CustomUserManager(BaseUserManager):
     def create_user(self, email, password=None, **extra_fields):
@@ -25,6 +24,12 @@ class CustomUser(AbstractUser):
 
     objects = CustomUserManager()
 
+    USERNAME_FIELD = 'email'
+    REQUIRED_FIELDS = []
+
+    def __str__(self):
+        return self.email
+
 class UserProfile(models.Model):
     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE)
     agent_code = models.CharField(max_length=10, unique=True)
@@ -38,7 +43,7 @@ class Profile(models.Model):
     bio = models.TextField()
 
     def __str__(self):
-        return self.user.username
+        return self.user.email
 
     def save(self, *args, **kwargs):
         super().save()

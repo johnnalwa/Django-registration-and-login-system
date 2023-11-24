@@ -45,16 +45,19 @@ class RegisterForm(UserCreationForm):
                                                                   'data-toggle': 'password',
                                                                   'id': 'password',
                                                                   }))
+
     class Meta:
-        model = User
+        model = CustomUser
         fields = ['first_name', 'last_name', 'username', 'email', 'password1', 'password2']
 
     def save(self, commit=True):
         user = super().save(commit=False)
         user.save()
-        # Generate the agent code
+        
+        # Assuming you have a related UserProfile model
         user_profile = UserProfile(user=user, agent_code=f'COACL{UserProfile.objects.count() + 1:03d}')
         user_profile.save()
+        
         return user
 
 

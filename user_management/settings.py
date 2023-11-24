@@ -30,24 +30,23 @@ SECRET_KEY = str(os.getenv('SECRET_KEY'))
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['21af-196-250-212-118.ngrok-free.app','127.0.0.1']
+ALLOWED_HOSTS = ['21af-196-250-212-118.ngrok-free.app','127.0.0.1', 'localhost', '6vb5fvt0-5500.inc1.devtunnels.ms']
 
 # CSRF_TRUSTED_ORIGINS
-CORS_ORIGIN_WHITELIST=['https://21af-196-250-212-118.ngrok-free.app','http://127.0.0.1']
-CSRF_TRUSTED_ORIGINS=['https://21af-196-250-212-118.ngrok-free.app','http://127.0.0.1']
+CORS_ORIGIN_WHITELIST=['https://21af-196-250-212-118.ngrok-free.app','http://127.0.0.1','https://6vb5fvt0-8000.inc1.devtunnels.ms/']
+CSRF_TRUSTED_ORIGINS=['https://21af-196-250-212-118.ngrok-free.app','http://127.0.0.1', 'https://6vb5fvt0-8000.inc1.devtunnels.ms/']
 
 # Application definition
 
 INSTALLED_APPS = [
+    'users',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'users.apps.UserConfig',
     'social_django',
-    
 ]
 
 MIDDLEWARE = [

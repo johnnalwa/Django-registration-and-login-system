@@ -6,7 +6,7 @@ from django.contrib import messages
 from django.contrib.messages.views import SuccessMessageMixin
 from django.views import View
 from django.contrib.auth.decorators import login_required, permission_required
-import time
+from django.contrib.auth import authenticate, login
 import datetime
 from .models import Attendance, Client, Commission, RoutePlan, Sale
 from .forms import AttendanceForm, ClientForm, LoginForm, RegisterForm, RoutePlanForm, SaleForm, UpdateProfileForm, UpdateUserForm 
@@ -15,6 +15,8 @@ from django.db.models import Sum, F, Case, When, Value, IntegerField
 from django.db.models.functions import Coalesce
 from django.db.models.functions import TruncMonth
 from django.contrib.auth.decorators import user_passes_test
+from users.models import CustomUser
+
 
 @user_passes_test(lambda u: u.is_superuser_with_tasks)
 def superuser_dashboard(request):
@@ -127,29 +129,30 @@ def managementView(request):
 
 class RegisterView(View):
     form_class = RegisterForm
-    initial = {'key': 'value'}
     template_name = 'users/register.html'
 
     def dispatch(self, request, *args, **kwargs):
-        # will redirect to the home page if a user tries to access the register page while logged in
+        # Redirect to the home page if a user tries to access the register page while logged in
         if request.user.is_authenticated:
             return redirect(to='/')
 
-        # else process dispatch as it otherwise normally would
+        # Process dispatch as it otherwise normally would
         return super(RegisterView, self).dispatch(request, *args, **kwargs)
 
     def get(self, request, *args, **kwargs):
-        form = self.form_class(initial=self.initial)
+        form = self.form_class()
         return render(request, self.template_name, {'form': form})
 
     def post(self, request, *args, **kwargs):
         form = self.form_class(request.POST)
 
         if form.is_valid():
-            form.save()
+            user = form.save()
 
-            username = form.cleaned_data.get('username')
-            messages.success(request, f'Account created for {username}')
+            # Log the user in after registration
+            login(request, user, backend='django.contrib.auth.backends.ModelBackend')
+
+            messages.success(request, 'Account created successfully.')
 
             return redirect(to='login')
 
