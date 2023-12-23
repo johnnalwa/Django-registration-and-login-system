@@ -9,13 +9,13 @@ from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.auth import authenticate, login
 import datetime
 from .models import Attendance, Client, Commission, RoutePlan, Sale
-from .forms import AttendanceForm, ClientForm, LoginForm, RegisterForm, RoutePlanForm, SaleForm, UpdateProfileForm, UpdateUserForm 
+from users.forms import AttendanceForm, ClientForm, LoginForm, RegisterForm, RoutePlanForm, SaleForm, UpdateProfileForm, UpdateUserForm
 import calendar
 from django.db.models import Sum, F, Case, When, Value, IntegerField
-from django.db.models.functions import Coalesce
-from django.db.models.functions import TruncMonth
+from django.db.models.functions import Coalesce,TruncMonth
 from django.contrib.auth.decorators import user_passes_test
 from users.models import CustomUser
+from django.http import HttpResponse
 
 
 @user_passes_test(lambda u: u.is_superuser_with_tasks)
@@ -132,11 +132,8 @@ class RegisterView(View):
     template_name = 'users/register.html'
 
     def dispatch(self, request, *args, **kwargs):
-        # Redirect to the home page if a user tries to access the register page while logged in
         if request.user.is_authenticated:
             return redirect(to='/')
-
-        # Process dispatch as it otherwise normally would
         return super(RegisterView, self).dispatch(request, *args, **kwargs)
 
     def get(self, request, *args, **kwargs):
@@ -148,19 +145,15 @@ class RegisterView(View):
 
         if form.is_valid():
             user = form.save()
-
-            # Log the user in after registration
             login(request, user, backend='django.contrib.auth.backends.ModelBackend')
-
             messages.success(request, 'Account created successfully.')
-
             return redirect(to='login')
 
         return render(request, self.template_name, {'form': form})
 
-
 # Class based view that extends from the built in login view to add a remember me functionality
 class CustomLoginView(LoginView):
+    template_name = 'users/login.html'
     form_class = LoginForm
 
     def form_valid(self, form):

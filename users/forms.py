@@ -1,17 +1,25 @@
 from django import forms
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
-from django.contrib.auth.forms import UserCreationForm
-from .models import CustomUser, Profile, RoutePlan, UserProfile
-from .models import Client, Sale
-from users.models import CustomUser  # Import the CustomUser model
+from .models import CustomUser, Profile, RoutePlan, UserProfile, Client, Sale
+from users.views import *
+from django.contrib.auth.forms import UserChangeForm
+from django.contrib.auth import get_user_model 
+
+User = get_user_model()
+
+
 class CustomUserCreationForm(UserCreationForm):
     class Meta:
         model = CustomUser
-        fields = ('username', 'password1', 'password2', 'is_superuser_with_tasks')
+        fields = ('email', 'password1', 'password2', 'is_superuser_with_tasks')
+
+class UpdateUserForm(UserChangeForm):
+    class Meta:
+        model = CustomUser
+        fields = ('email', 'first_name', 'last_name')
         
 class RegisterForm(UserCreationForm):
-    # fields we want to include and customize in our form
     first_name = forms.CharField(max_length=100,
                                  required=True,
                                  widget=forms.TextInput(attrs={'placeholder': 'First Name',
@@ -48,7 +56,7 @@ class RegisterForm(UserCreationForm):
 
     class Meta:
         model = CustomUser
-        fields = ['first_name', 'last_name', 'username', 'email', 'password1', 'password2']
+        fields = ['first_name', 'last_name', 'email', 'password1', 'password2']
 
     def save(self, commit=True):
         user = super().save(commit=False)
@@ -61,12 +69,15 @@ class RegisterForm(UserCreationForm):
         return user
 
 
+
+
+
 class LoginForm(AuthenticationForm):
-    username = forms.CharField(max_length=100,
-                               required=True,
-                               widget=forms.TextInput(attrs={'placeholder': 'Username',
-                                                             'class': 'form-control',
-                                                             }))
+    email = forms.EmailField(max_length=100,
+                             required=True,
+                             widget=forms.TextInput(attrs={'placeholder': 'Email',
+                                                           'class': 'form-control',
+                                                           }))
     password = forms.CharField(max_length=50,
                                required=True,
                                widget=forms.PasswordInput(attrs={'placeholder': 'Password',
@@ -78,21 +89,8 @@ class LoginForm(AuthenticationForm):
     remember_me = forms.BooleanField(required=False)
 
     class Meta:
-        model = User
-        fields = ['username', 'password', 'remember_me']
-
-
-class UpdateUserForm(forms.ModelForm):
-    username = forms.CharField(max_length=100,
-                               required=True,
-                               widget=forms.TextInput(attrs={'class': 'form-control'}))
-    email = forms.EmailField(required=True,
-                             widget=forms.TextInput(attrs={'class': 'form-control'}))
-
-    class Meta:
-        model = User
-        fields = ['username', 'email']
-
+        model = get_user_model()
+        fields = ['email', 'password', 'remember_me']
 
 class UpdateProfileForm(forms.ModelForm):
     avatar = forms.ImageField(widget=forms.FileInput(attrs={'class': 'form-control-file'}))
