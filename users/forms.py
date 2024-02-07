@@ -2,8 +2,7 @@ from django import forms
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 
-from .models import Profile, RoutePlan, UserProfile
-from .models import Client, Sale
+from .models import DisciplinaryAction, EducationalProgram, Facility, Incident, Infraction, Inmate, InmateEducation, LegalCase, MedicalRecord, Profile, ReleasePlan, UserProfile, Visitor, WorkAssignment, WorkRecord
 
 
 class RegisterForm(UserCreationForm):
@@ -95,37 +94,80 @@ class UpdateProfileForm(forms.ModelForm):
         model = Profile
         fields = ['avatar', 'bio']
 
-
-class ClientForm(forms.ModelForm):
+class InmateForm(forms.ModelForm):
     class Meta:
-        model = Client
+        model = Inmate
         fields = '__all__'
 
-def __init__(self, *args, **kwargs):
-        super(ClientForm, self).__init__(*args, **kwargs)
-        self.fields['pf_number'].widget.attrs['disabled'] = True
-        self.fields['amount'].widget.attrs['disabled'] = True
-        self.fields['comment'].widget.attrs['disabled'] = True
-        self.fields['pf_number_conversion'].widget.attrs['disabled'] = True
-        self.fields['password'].widget.attrs['disabled'] = True
-        self.fields['amount_applied'].widget.attrs['disabled'] = True
-        self.fields['date_field'].widget.attrs['disabled'] = True
-        self.fields['type_loan_qualify'].widget.attrs['disabled'] = True
-        self.fields['comment_conversion'].widget.attrs['disabled'] = True
-        
-class AttendanceForm(forms.Form):
-    latitude = forms.CharField(widget=forms.HiddenInput())
-    longitude = forms.CharField(widget=forms.HiddenInput())
-    
-class SaleForm(forms.ModelForm):
+
+class ReleasePlanForm(forms.ModelForm):
     class Meta:
-        model = Sale
-        fields = ['agent', 'client_name', 'loan_amount_paid', 'date_paid']
-        
-        
-class RoutePlanForm(forms.ModelForm):
-    agent = forms.ModelChoiceField(queryset=User.objects.all().order_by('username'))
-    
+        model = ReleasePlan
+        fields = '__all__'
+
+
+class WorkAssignmentForm(forms.ModelForm):
     class Meta:
-        model = RoutePlan
-        fields = ['date', 'agent', 'institution', 'location']
+        model = WorkAssignment
+        fields = '__all__'
+
+
+class WorkRecordForm(forms.ModelForm):
+    class Meta:
+        model = WorkRecord
+        fields = '__all__'
+
+
+class InfractionForm(forms.ModelForm):
+    class Meta:
+        model = Infraction
+        fields = '__all__'
+
+
+class DisciplinaryActionForm(forms.ModelForm):
+    class Meta:
+        model = DisciplinaryAction
+        fields = '__all__'
+
+
+class MedicalRecordForm(forms.ModelForm):
+    class Meta:
+        model = MedicalRecord
+        fields = '__all__'
+
+
+class VisitorForm(forms.ModelForm):
+    class Meta:
+        model = Visitor
+        fields = '__all__'
+
+
+class IncidentForm(forms.ModelForm):
+    class Meta:
+        model = Incident
+        fields = '__all__'
+
+
+class FacilityForm(forms.ModelForm):
+    class Meta:
+        model = Facility
+        fields = '__all__'
+
+
+class LegalCaseForm(forms.ModelForm):
+    class Meta:
+        model = LegalCase
+        fields = '__all__'
+
+
+class EducationalProgramForm(forms.ModelForm):
+    class Meta:
+        model = EducationalProgram
+        fields = '__all__'
+
+
+class InmateEducationForm(forms.ModelForm):
+    class Meta:
+        model = InmateEducation
+        fields = '__all__'
+

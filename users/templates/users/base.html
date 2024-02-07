@@ -10,7 +10,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="viewport" content="initial-scale=1, maximum-scale=1">
     <!-- site metas -->
-    <title>{% block title %}Matunda AC Agents{% endblock %}</title>
+    <title>{% block title %}Prisom management System{% endblock %}</title>
     <meta name="keywords" content="">
     <meta name="description" content="">
     <meta name="author" content="">
@@ -58,10 +58,9 @@
                 <div class="sidebar_user_info">
                     <div class="icon_setting"></div>
                     <div class="user_profle_side">
-                        <div class="user_img"><img class="img-responsive" src="{% static 'images/layout_img/user_img.jpg' %}" alt="#" /></div>
                         <div class="user_info">
                             <h6>Hi {{user.first_name.title|default:'Guest'}}</h6>
-                            <p><span class="online_animation"></span> Online</p>
+                           
                         </div>
                     </div>
                 </div>
@@ -75,28 +74,53 @@
                         </a>
                     </li>
                     <li>
-                        <a href="{% url 'calendar_view' %}">
-                            <i class="fa fa-calendar"></i> <span>Daily Attendance Register</span>
+                        <a href="">
+                            <i class="fas fa-exclamation-circle"></i> <span>Disciplinary Action</span>
                         </a>
                     </li>
                     
                     <li>
                         <a href="#">
-                            <i class="fa fa-paper-plane red_color"></i> <span>Contact</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="{% url 'add_client' %}">
-                            <i class="fa fa-user-plus"></i> <span>Add Clients</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="{% url 'user_clients' %}">
-                            <i class="fa fa-users"></i> <span>My Clients</span>
+                            <i class="fas fa-tasks red_color"></i> <span>Work Assignment</span>
                         </a>
                     </li>
                     
-                    <li><a href="#"><i class="fa fa-bar-chart-o green_color"></i> <span>Charts</span></a></li>
+                    <li>
+                        <a href="">
+                            <i class="fas fa-user-plus"></i> <span>Add Inmates</span>
+                        </a>
+                    </li>
+                    
+                    <li>
+                        <a href="">
+                            <i class="fas fa-users"></i> <span>Inmates</span>
+                        </a>
+                    </li>
+                    
+                    <li>
+                        <a href="#">
+                            <i class="fas fa-building green_color"></i> <span>Facilities</span>
+                        </a>
+                    </li>
+                    
+                    <li>
+                        <a href="#">
+                            <i class="fas fa-exclamation-triangle yellow_color"></i> <span>Infraction</span>
+                        </a>
+                    </li>
+                    
+                    <li>
+                        <a href="#">
+                            <i class="fas fa-notes-medical blue_color"></i> <span>Medical Record</span>
+                        </a>
+                    </li>
+                    
+                    <li>
+                        <a href="#">
+                            <i class="fas fa-user-friends purple_color"></i> <span>Visitors</span>
+                        </a>
+                    </li>
+                    
                     <li>
                       <a href="{% url 'logout' %}">
                           <i class="fas fa-sign-out-alt"></i> <span>Logout</span>
@@ -125,16 +149,7 @@
                                 <li><a href="#"><i class="fas fa-envelope"></i><span class="badge">0</span></a></li>
                             </ul>
                             
-                                <ul class="user_profile_dd">
-                                    <li>
-                                        <a class="dropdown-toggle" data-toggle="dropdown"><img class="img-responsive rounded-circle" src="{% static 'images/layout_img/user_img.jpg' %}" alt="#" /><span class="name_user">{% block full_name %}{% endblock %}</span></a>
-                                        <div class="dropdown-menu">
-                                            <a class="dropdown-item" href="{% url 'users-profile' %}">My Profile</a>
-                                            <a class="dropdown-item" href="#">Help</a>
-                                            <a class="dropdown-item" href="{% url 'logout' %}"><span>Log Out</span> <i class="fa fa-sign-out"></i></a>
-                                        </div>
-                                    </li>
-                                </ul>
+                              
                             </div>
                         </div>
                     </div>

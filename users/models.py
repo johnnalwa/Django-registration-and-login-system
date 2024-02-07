@@ -1,9 +1,6 @@
-from django.db import models
 from django.contrib.auth.models import User
+from django.db import models
 from PIL import Image
-from django.core.validators import RegexValidator
-
-
 
 
 class UserProfile(models.Model):
@@ -35,93 +32,107 @@ class Profile(models.Model):
             img.save(self.avatar.path)
 
 
-
-
-class Client(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True)
-    # user = models.ForeignKey(User, on_delete=models.CASCADE, default=None)   # Add a ForeignKey field to User
-    client_fullname = models.CharField(max_length=255)
-    id_number = models.CharField(
-                max_length=8,  # Allow up to 8 characters
-                unique=True,
-                validators=[
-                    RegexValidator(
-                        regex=r'^[0-9]{7,8}$',  # Only digits, 7 to 8 characters
-                        message='ID number must be 7 to 8 digits long.',
-                    ),
-                ]
-            )
-
-    phone_number = models.CharField(
-                max_length=12,  # Allow up to 12 characters
-                validators=[
-                    RegexValidator(
-                        regex=r'^[0-9]{10,12}$',  # Only digits, 10 to 12 characters
-                        message='Phone number must be 10 to 12 digits long.',
-                    ),
-                ]
-            )
-    ministry = models.CharField(max_length=255)
-    TYPE_CHOICES = (
-        ('prospects', 'Prospects'),
-        ('lead', 'Lead'),
-        ('conversion', 'Conversion'),
+class Inmate(models.Model):
+    GENDER_CHOICES = (
+        ('M', 'Male'),
+        ('F', 'Female'),
+        ('O', 'Other'),
     )
-    type = models.CharField(max_length=20, choices=TYPE_CHOICES)
-    pf_number = models.CharField(max_length=255, blank=True, null=True)
-    amount = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
-    comment = models.TextField(blank=True, null=True)
-    pf_number_conversion = models.CharField(max_length=255, blank=True, null=True)
-    password = models.CharField(max_length=255, blank=True, null=True)
-    amount_applied = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
-    date_field = models.DateField(blank=True, null=True)
-    comment_conversion = models.TextField(blank=True, null=True)
-    TYPE_LOAN_CHOICES = (
-        ('refinance', 'Refinance'),
-        ('topup', 'Top-Up'),
-        ('buyoff', 'Buy-Off'),
-    )
-    type_loan_qualify = models.CharField(max_length=20, choices=TYPE_LOAN_CHOICES, blank=True, null=True)
 
-    def __str__(self):
-        return self.client_fullname
-
-
-class Attendance(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    date = models.DateField()
-    location = models.CharField(max_length=255)
-    timestamp = models.DateTimeField(auto_now_add=True)
-    latitude = models.DecimalField(max_digits=9, decimal_places=6)  # Store latitude as a DecimalField
-    longitude = models.DecimalField(max_digits=9, decimal_places=6)  # Store longitude as a DecimalField
-
-    class Meta:
-        unique_together = ('user', 'date',)
-        
-        
-class Sale(models.Model):
-    agent = models.ForeignKey(User, on_delete=models.CASCADE)
-    client_name = models.CharField(max_length=100)
-    loan_amount_paid = models.DecimalField(max_digits=10, decimal_places=2)
-    date_paid = models.DateField()
-    commission = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)  # Add commission field
-
-    def __str__(self):
-        return self.client_name
-
-class Commission(models.Model):
-    agent = models.OneToOneField(User, on_delete=models.CASCADE)
-    commission_amount = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
-
-    def __str__(self):
-        return self.agent.username
+    first_name = models.CharField(max_length=100)
+    last_name = models.CharField(max_length=100)
+    date_of_birth = models.DateField()
+    gender = models.CharField(max_length=1, choices=GENDER_CHOICES)
+    admission_date = models.DateField()
+    security_level = models.CharField(max_length=50)
+    cell_number = models.CharField(max_length=20)
+    height = models.FloatField()  # Height in meters
+    weight = models.FloatField()  # Weight in kilograms
+    hair_color = models.CharField(max_length=50)
+    eye_color = models.CharField(max_length=50)
+    tattoos = models.TextField(blank=True, null=True)
+    scars = models.TextField(blank=True, null=True)
+    photo = models.ImageField(upload_to='inmate_photos/', blank=True, null=True)
     
-class RoutePlan(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    date = models.DateField()
-    agent = models.CharField(max_length=100)
-    institution = models.CharField(max_length=100)
-    location = models.CharField(max_length=100)
-
     def __str__(self):
-        return f"{self.date} - {self.agent} - {self.institution} - {self.location}"
+        return f"{self.first_name} {self.last_name}"
+    
+
+class ReleasePlan(models.Model):
+    inmate = models.ForeignKey(Inmate, on_delete=models.CASCADE)
+    release_date = models.DateField()
+    release_reason = models.CharField(max_length=200)
+    
+
+class WorkAssignment(models.Model):
+    inmate = models.ForeignKey(Inmate, on_delete=models.CASCADE)
+    task = models.CharField(max_length=200)
+    assigned_by = models.ForeignKey(User, on_delete=models.CASCADE)
+    date_assigned = models.DateField()
+    # Other fields
+
+class WorkRecord(models.Model):
+    work_assignment = models.ForeignKey(WorkAssignment, on_delete=models.CASCADE)
+    date = models.DateField()
+    hours_worked = models.DecimalField(max_digits=5, decimal_places=2)
+    # Other fields
+    
+class Infraction(models.Model):
+    inmate = models.ForeignKey(Inmate, on_delete=models.CASCADE)
+    description = models.TextField()
+    date = models.DateField()
+    reported_by = models.ForeignKey(User, on_delete=models.CASCADE)
+    # Other fields
+
+class DisciplinaryAction(models.Model):
+    infraction = models.ForeignKey(Infraction, on_delete=models.CASCADE)
+    action_taken = models.TextField()
+    disciplinary_officer = models.ForeignKey(User, on_delete=models.CASCADE)
+    date = models.DateField()
+    # Other fields
+    
+
+class MedicalRecord(models.Model):
+    inmate = models.ForeignKey(Inmate, on_delete=models.CASCADE)
+    condition = models.CharField(max_length=200)
+    treatment = models.TextField()
+    doctor = models.CharField(max_length=100)
+    date = models.DateField()
+    
+class Visitor(models.Model):
+    first_name = models.CharField(max_length=100)
+    last_name = models.CharField(max_length=100)
+    date_of_visit = models.DateField()
+    inmate_visited = models.ForeignKey(Inmate, on_delete=models.CASCADE)
+    purpose = models.TextField()
+    
+    
+class Incident(models.Model):
+    type = models.CharField(max_length=100)
+    description = models.TextField()
+    reported_by = models.ForeignKey(User, on_delete=models.CASCADE)
+    date_reported = models.DateTimeField(auto_now_add=True)
+    
+class Facility(models.Model):
+    name = models.CharField(max_length=100)
+    location = models.CharField(max_length=200)
+    capacity = models.IntegerField()
+    
+class LegalCase(models.Model):
+    inmate = models.ForeignKey(Inmate, on_delete=models.CASCADE)
+    case_number = models.CharField(max_length=100)
+    court_date = models.DateField()
+    case_description = models.TextField()
+    
+class EducationalProgram(models.Model):
+    name = models.CharField(max_length=200)
+    description = models.TextField()
+    instructor = models.CharField(max_length=200)
+    start_date = models.DateField()
+    end_date = models.DateField()
+    
+class InmateEducation(models.Model):
+    inmate = models.ForeignKey(Inmate, on_delete=models.CASCADE)
+    program = models.ForeignKey(EducationalProgram, on_delete=models.CASCADE)
+    enrollment_date = models.DateField()
+    completion_date = models.DateField(null=True, blank=True)
